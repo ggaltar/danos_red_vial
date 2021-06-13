@@ -34,19 +34,6 @@ control_capas = L.control.layers(capas_base).addTo(mapa);
 L.control.scale({position: "topright", imperial: false}).addTo(mapa);
 
 // Capas vectoriales en formato GeoJSON
-$.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/zonas_conservacion_wgs84.geojson", function(geodata) {
-  var capa_zcv = L.geoJson(geodata, {
-    style: function(feature) {
-	  return {'color': "#013220", 'weight': 2.5, 'fillOpacity': 0.0}
-    },
-    onEachFeature: function(feature, layer) {
-      var popupText = "<strong>Zona de conservación vial</strong>: " + feature.properties.Zona2 + "<br>" + "<strong>Nombre de la zona</strong>: " + feature.properties.Nombre + "<br>" + "<strong>Contacto</strong>: " + feature.properties.Contacto;
-      layer.bindPopup(popupText);
-    }			
-  }).addTo(mapa);
-
-  control_capas.addOverlay(capa_zcv, 'Zonas de conservación');
-});
 
 $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/red_vial_nacional_wgs84.geojson", function(geodata) {
   var capa_rvn = L.geoJson(geodata, {
@@ -99,7 +86,10 @@ $.getJSON('https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/z
 	    fillOpacity: 0.7
 	  },
 	  onEachFeature: function (feature, layer) {
-	    layer.bindPopup('Zona de conservación: ' + feature.properties.Zona2 + '<br>' + 'Cantidad de daños: ' + feature.properties.cantidad.toLocaleString())
+	    layer.bindPopup('<strong>Zona de conservación</strong>: ' + feature.properties.Zona2 + '<br>'
+		+ '<strong>Nombre de la zona</strong>: ' + feature.properties.Nombre + '<br>'
+		+'<strong>Cantidad de daños</strong>: ' + feature.properties.cantidad.toLocaleString()+ '<br>'
+		+ '<strong>Contacto</strong>: ' + feature.properties.Contacto)
 	  }
   }).addTo(mapa);
   control_capas.addOverlay(capa_zonas_coropletas, 'Cantidad de daños reportados por zona de conservación');	
