@@ -33,7 +33,15 @@ control_capas = L.control.layers(capas_base).addTo(mapa);
 // Control de escala
 L.control.scale({position: "topright", imperial: false}).addTo(mapa);
 
+// Ícono personalizado para daños
+const iconoPuntos = L.divIcon({
+  html: '<i class="fa-solid fa-location"></i>',
+  className: 'estiloIconos'
+});
+
 // Capas vectoriales en formato GeoJSON
+
+// Capas de la red vial nacional
 
 $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/red_vial_nacional_wgs84.geojson", function(geodata) {
   var capa_rvn = L.geoJson(geodata, {
@@ -41,13 +49,20 @@ $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/r
 	  return {'color': "red", 'weight': 2, 'fillOpacity': 0.0}
     },
     onEachFeature: function(feature, layer) {
-      var popupText = "<strong>Ruta</strong>: " + feature.properties.RUTA + "<br>" + "<strong>Sección de control</strong>: " + feature.properties.SECCION;
+      var popupText = "<strong>Ruta</strong>: " + feature.properties.ruta + "<br>"
+	  + "<strong>Sección de control</strong>: " + feature.properties.seccion + "<br>"
+	  + "<strong>Tramo</strong>: " + feature.properties.descrip + "<br>"
+	  + "<strong>Clase</strong>: " + feature.properties.clase;
       layer.bindPopup(popupText);
-    }			
+    },
+    pointToLayer: function(getJsonPoint, latlng) {
+		return L.marker(latlng, {icon: iconoCarnivoro});	
   }).addTo(mapa);
 
   control_capas.addOverlay(capa_rvn, 'Red Vial Nacional');
 });
+
+// Capas de daños
 
 $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/danos_wgs84.geojson", function(geodata) {
   var capa_danos = L.geoJson(geodata, {
@@ -55,7 +70,12 @@ $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/d
 	  return {'color': "green", 'weight': 2.5, 'fillOpacity': 1.0}
     },
     onEachFeature: function(feature, layer) {
-      var popupText = "<strong>Estructura</strong>: " + feature.properties.estructura + "<br>" + "<strong>Elemento</strong>: " + feature.properties.elemento + "<br>" + "<strong>Tipo de daño</strong>: " + feature.properties.tipo + "<br>" + "<strong>Severidad</strong>: " + feature.properties.severidad;
+      var popupText = "<strong>Estructura</strong>: " + feature.properties.estructura + "<br>"
+	  + "<strong>Elemento</strong>: " + feature.properties.elemento + "<br>"
+	  + "<strong>Tipo de daño</strong>: " + feature.properties.tipo + "<br>"
+	  + "<strong>Descripción del daño</strong>: " + feature.properties.descripcio + "<br>"
+	  + "<strong>Fecha del daño</strong>: " + feature.properties.fecha_dano + "<br>"
+	  + "<strong>Severidad</strong>: " + feature.properties.severidad
       layer.bindPopup(popupText);
     }			
   }).addTo(mapa);
@@ -92,7 +112,7 @@ $.getJSON('https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/z
 		+ '<strong>Contacto</strong>: ' + feature.properties.Contacto)
 	  }
   }).addTo(mapa);
-  control_capas.addOverlay(capa_zonas_coropletas, 'Cantidad de daños reportados por zona de conservación');	
+  control_capas.addOverlay(capa_zonas_coropletas, 'Zonas de conservación vial');	
 
   // Leyenda de la capa de coropletas
   var leyenda = L.control({ position: 'bottomleft' })
