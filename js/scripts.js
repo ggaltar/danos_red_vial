@@ -27,17 +27,21 @@ var capas_base = {
   "CartoDB Voyager": CartoDB_Voyager
 };	    
 	    
+		
+// Ícono personalizado para carnivoros
+const iconoLocation = L.divIcon({
+  html: '<i class="fa-solid fa-cat"></i>',
+  className: 'estiloIconos'
+});		
+	
+	
 // Control de capas
 control_capas = L.control.layers(capas_base).addTo(mapa);	
 
 // Control de escala
 L.control.scale({position: "topright", imperial: false}).addTo(mapa);
 
-// Ícono personalizado para daños
-const iconoPuntos = L.divIcon({
-  html: '<i class="fa-solid fa-location"></i>',
-  className: 'estiloIconos'
-});
+
 
 // Capas vectoriales en formato GeoJSON
 
@@ -46,7 +50,7 @@ const iconoPuntos = L.divIcon({
 $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/red_vial_nacional_wgs84.geojson", function(geodata) {
   var capa_rvn = L.geoJson(geodata, {
     style: function(feature) {
-	  return {'color': "red", 'weight': 2, 'fillOpacity': 0.0}
+	  return {'color': "black", 'weight': 2.5, 'fillOpacity': 0.0}
     },
     onEachFeature: function(feature, layer) {
       var popupText = "<strong>Ruta</strong>: " + feature.properties.ruta + "<br>"
@@ -54,9 +58,7 @@ $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/r
 	  + "<strong>Tramo</strong>: " + feature.properties.descrip + "<br>"
 	  + "<strong>Clase</strong>: " + feature.properties.clase;
       layer.bindPopup(popupText);
-    },
-    pointToLayer: function(getJsonPoint, latlng) {
-		return L.marker(latlng, {icon: iconoCarnivoro});	
+    }
   }).addTo(mapa);
 
   control_capas.addOverlay(capa_rvn, 'Red Vial Nacional');
@@ -77,7 +79,10 @@ $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/d
 	  + "<strong>Fecha del daño</strong>: " + feature.properties.fecha_dano + "<br>"
 	  + "<strong>Severidad</strong>: " + feature.properties.severidad
       layer.bindPopup(popupText);
-    }			
+    },
+    pointToLayer: function(getJsonPoint, latlng) {
+        return L.marker(latlng, {icon: iconoLocation});
+    }
   }).addTo(mapa);
 
   control_capas.addOverlay(capa_danos, 'Daños reportados');
