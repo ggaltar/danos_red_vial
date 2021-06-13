@@ -28,12 +28,16 @@ var capas_base = {
 };	    
 	    
 		
-// Ícono personalizado para carnivoros
-const iconoLocation = L.divIcon({
-  html: '<i class="fa-solid fa-cat"></i>',
-  className: 'estiloIconos'
-});		
-	
+// Ícono personalizado para daños
+
+var iconoDano = new L.Icon({
+  iconUrl: 'img/marker-icon-blue.png',
+  shadowUrl: 'img/marker-shadow.png',
+  iconSize: [12, 20],
+  iconAnchor: [6, 20],
+  popupAnchor: [1, -34],
+  shadowSize: [20, 20]
+});
 	
 // Control de capas
 control_capas = L.control.layers(capas_base).addTo(mapa);	
@@ -50,7 +54,7 @@ L.control.scale({position: "topright", imperial: false}).addTo(mapa);
 $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/red_vial_nacional_wgs84.geojson", function(geodata) {
   var capa_rvn = L.geoJson(geodata, {
     style: function(feature) {
-	  return {'color': "black", 'weight': 2.5, 'fillOpacity': 0.0}
+	  return {'color': "#C6250F", 'weight': 2, 'fillOpacity': 0.0}
     },
     onEachFeature: function(feature, layer) {
       var popupText = "<strong>Ruta</strong>: " + feature.properties.ruta + "<br>"
@@ -81,7 +85,7 @@ $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/d
       layer.bindPopup(popupText);
     },
     pointToLayer: function(getJsonPoint, latlng) {
-        return L.marker(latlng, {icon: iconoLocation});
+        return L.marker(latlng, {icon: iconoDano});
     }
   }).addTo(mapa);
 
@@ -98,7 +102,7 @@ var capa_cantones = L.tileLayer.wms('https://geos.snitcr.go.cr/be/IGN_5/wms?', {
 
 control_capas.addOverlay(capa_cantones, 'Cantones');
 
-// Capa de coropletas de cantidad de daños reportados por zona de conservación
+// Capa de coropletas zona de conservación por cantidad de daños
 $.getJSON('https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/zonas_conservacion_wgs84.geojson', function (geojson) {
   var capa_zonas_coropletas = L.choropleth(geojson, {
 	  valueProperty: 'cantidad',
