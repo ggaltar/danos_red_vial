@@ -1,5 +1,5 @@
 // Mapa Leaflet
-var mapa = L.map('mapid').setView([9.8, -84.25], 8.5);
+var mapa = L.map('mapid').setView([9.8, -84.25], 8);
 
 // Definición de capas base de tesela
 var capa_osm = L.tileLayer(
@@ -49,7 +49,7 @@ L.control.scale({position: "topright", imperial: false}).addTo(mapa);
 
 // Capas vectoriales en formato GeoJSON
 
-// Capas de la red vial nacional
+// Capa de la red vial nacional
 
 $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/red_vial_nacional_wgs84.geojson", function(geodata) {
   var capa_rvn = L.geoJson(geodata, {
@@ -87,10 +87,25 @@ $.getJSON("https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/d
     pointToLayer: function(getJsonPoint, latlng) {
         return L.marker(latlng, {icon: iconoDano});
     }
-  }).addTo(mapa);
+  });
 
+  // Capa de daños agrupados (no permite la agrupación después del nivel de zoom 10)
+  var capa_danos_agrupados = L.markerClusterGroup({spiderfyOnMaxZoom: false, disableClusteringAtZoom : 10});
+  capa_danos_agrupados.addLayer(capa_danos);
+  
+  
+  // Capa de calor (heatmap)
+  coordenadas = geodata.features.map(feat => feat.geometry.coordinates.reverse());
+  var capa_danos_calor = L.heatLayer(coordenadas, {radius: 18, blur: 8, minOpacity: 0.2, maxZoom: 20});
+
+ 
+ // Se añade la capa al mapa y al control de capas
+  capa_danos_agrupados.addTo(mapa);
+  control_capas.addOverlay(capa_danos_calor, 'Mapa de calor');
+  control_capas.addOverlay(capa_danos_agrupados, 'Registros agrupados de daños');
   control_capas.addOverlay(capa_danos, 'Daños reportados');
 });
+
 
 // Capa WMS
 var capa_cantones = L.tileLayer.wms('https://geos.snitcr.go.cr/be/IGN_5/wms?', {
@@ -144,17 +159,3 @@ $.getJSON('https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/z
   }
   leyenda.addTo(mapa)
 });
-
-// Capa raster de precipitación del periodo más frío
-var capa_precipitacion = L.imageOverlay("capas/bio19_cr.png", 
-	[[5.5002762949999999, -87.1003465999999946], 
-	[11.2181154430000003, -82.5547031640000029]], 
-	{opacity:0.5}
-).addTo(mapa);
-control_capas.addOverlay(capa_precipitacion, 'Precipitación del periodo más frío');
-
-// Función de control de opacidad
-function updateOpacityPrec() {
-  document.getElementById("span-opacity-prec").innerHTML = document.getElementById("sld-opacity-prec").value;
-  capa_precipitacion.setOpacity(document.getElementById("sld-opacity-prec").value);
-}

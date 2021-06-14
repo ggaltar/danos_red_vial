@@ -16,14 +16,23 @@
     <!-- Enlace a complemento Leaflet-choropleth -->
     <script src="js/choropleth.js"></script> 
 
-    <!-- Enlace a kit de Font Awesome -->
-	<script src="https://kit.fontawesome.com/c7a9049a73.js" crossorigin="anonymous"></script>
+    <!-- Complemento Leaflet.markercluster -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster-src.js"></script>
+
+    <!-- Complemento Leaflet.heat -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+
 
     <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
     <h1>Daños en la Red Vial Nacional</h1>  
 	<h3>Reportes por Zonas de Conservación Vial</h3> 	
+	
+	<a href="https://github.com/ggaltar/danos_red_vial">Código fuente</a>
+	
 	    
     <!-- Elemento div para contener el mapa Leaflet -->
     <div id="mapid"></div>
@@ -31,11 +40,7 @@
     <!-- Código JavaScript para generar y manejar el mapa Leaflet -->
     <script src="js/scripts.js"></script>	
 
-	 <!-- Controles para la opacidad de la capa de precipitación -->
-	<h5>Opacidad de la capa de precipitación en el período más frío: <span id="span-opacity-prec">0.5</span></h5>
-	<input type='range' id='sld-opacity-prec' min='0' max='1' step='0.1' value='0.5' onchange='updateOpacityPrec();'>
-	
-	<a href="https://github.com/ggaltar/danos_red_vial">Código fuente</a>
-	
+
+
 </body>
 </html>	
